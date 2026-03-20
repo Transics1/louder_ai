@@ -57,7 +57,7 @@ export const generateEventPlan = async (query) => {
             { timeout: 15000 }
         );
 
-        console.log("✅ Gemini API Success");
+        console.log("✅ Gemini 2.5 Flash API Success");
         const text =
             res.data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 

@@ -9,10 +9,37 @@ import helmet from "helmet";
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",     
+  "http://localhost:3000",     
+  "http://127.0.0.1:5173",       
+  "https://louder-ai-client.vercel.app", 
+  "https://louder-ai.vercel.app",         
+];
+
+console.log(`CORS Allowed Origins: ${allowedOrigins.join(", ")}`);
+
 app.use(cors({
-  origin: "https://your-frontend-url.vercel.app",
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin) {
+      console.log("CORS: No origin (Postman/Mobile) - Allowed");
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      console.log(`CORS: ${origin} - Allowed`);
+      callback(null, true);
+    } else {
+      console.warn(`CORS: ${origin} - Blocked (not in allowed list)`);
+      callback(new Error(`CORS Not allowed by policy. Origin: ${origin}`));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  credentials: true,
+  optionsSuccessStatus: 200,
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
 app.use(express.json());
 
 app.use((req, res, next) => {
